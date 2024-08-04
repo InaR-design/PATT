@@ -3,10 +3,10 @@
 This repository is the official implementation of the AAAI25 submission paper [PATT]().
 
 ## Overview
-
+<!-- 
 <p align="center">
     <img src="./framework.png" alt="Framework of PATT" />
-</p>
+</p> -->
 
 ![The pipeline of the proposed model.](./framework.png)
 
