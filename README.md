@@ -7,6 +7,9 @@ This repository is the official implementation of the AAAI25 submission paper [P
 <p align="center">
     <img src="./framework.png" alt="Framework of PATT" />
 </p>
+
+![The pipeline of the proposed model.](./framework.png)
+
 Overview of the proposed framework. The framework consists of a temperature scaling-based implicit semantic augmentation training phase and a feature calibration inference phase. We jointly optimize two complementary terms to encourage desirable hypersphere embedding space: a implicit semantic augmentation contrastive loss to encourage balanced feature encoder and a temperature scaling-based logit adjustment loss encourage balanced high confidence classifier. Feature calibration during the inference phase achieves satisfactory classification and OOD detection results by fine-tuning the features.
 
 ## Rquirements
