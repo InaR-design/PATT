@@ -25,9 +25,9 @@ Please download [CIFAR10](), [CIFAR100](), and [ImageNet-LT](https://liuziwei7.g
 
 ### Surrogate/Out-of-distribution datasets
 
-For [CIFAR10-LT]() and [CIFAR100-LT](), please download [TinyImages 300K Random Images](https://people.eecs.berkeley.edu/~hendrycks/300K_random_images.npy) for surrogate OOD and [SC-OOD](https://jingkang50.github.io/projects/scood) for OOD test in `./dataset` 
+For [CIFAR10-LT]() and [CIFAR100-LT](), please download [TinyImages 300K Random Images](https://people.eecs.berkeley.edu/~hendrycks/300K_random_images.npy) for surrogate OOD and [SC-OOD](https://jingkang50.github.io/projects/scood) for OOD test in `./dataset/Tiny_Images_Dataset` 
 
-For [ImageNet-LT](https://liuziwei7.github.io/projects/LongTail.html), please download [ImageNet10k_eccv2010](https://image-net.org/data/imagenet10k_eccv2010.tar) for surrogate OOD and test OOD in `./dataset` 
+For [ImageNet-LT](https://liuziwei7.github.io/projects/LongTail.html), please download [ImageNet10k_eccv2010](https://image-net.org/data/imagenet10k_eccv2010.tar) for surrogate OOD and test OOD 
 
 All datasets follow [PASCL](https://github.com/amazon-science/long-tailed-ood-detection)
 
@@ -72,18 +72,4 @@ python test_imagenet.py --gpu 0 --FC True --txtt <txt_path_for_train> --txtv <tx
 ```
 
 
-## Acknowledgment
 
-Part of our codes are adapted from these repos:
-
-Outlier-Exposure - https://github.com/hendrycks/outlier-exposure - Apache-2.0 license
-
-PASCL - https://github.com/amazon-science/long-tailed-ood-detection - Apache-2.0 license
-
-ProCo - https://github.com/LeapLabTHU/ProCo - Apache-2.0 license
-
-Long-Tailed-Recognition.pytorch - https://github.com/KaihuaTang/Long-Tailed-Recognition.pytorch - GPL-3.0 license
-
-## License
-
-This project is licensed under the Apache-2.0 License.

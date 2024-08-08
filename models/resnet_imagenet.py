@@ -30,7 +30,7 @@ class ResNet_ImageNet(ResNet):
         scaler = MinMaxScaler(feature_range=(0,2))
         finalScore = scaler.fit_transform(self.finalScore.cpu().data.numpy().reshape(-1, 1)).ravel()
         self.finalScore.data = torch.from_numpy(finalScore).cuda()
-        return self.finalScore.data, self.linear.bias
+        return self.finalScore.data
     
     def reset_parameters(self, weight):
         stdv = 1. / math.sqrt(weight.size(1))
@@ -43,16 +43,14 @@ class ResNet_ImageNet(ResNet):
         Score = torch.zeros(512).cuda()
         ood_Score = torch.zeros(512).cuda()
         p = priors**-1
-        # p = weight
-        #p = torch.cat((priors**-1, torch.tensor([1]).cuda()), dim = 0)
         for feature, label in zip(normed_x, labels):
             Score = torch.mul(feature, normed_w[label]) * p[label] + Score
-        Score = Score / len(labels)#一个batch的均值
+        Score = Score / len(labels)
         self.finalScore.data = self.finalScore.data*batchs + Score
 
         for feature, label in zip(ood_x, ood_labels):
             ood_Score = torch.mul(feature, normed_w[label]) * p[int(num_classes/2)] + ood_Score#int(num_classes/2)
-        ood_Score = ood_Score / len(ood_labels)#一个batch的均值
+        ood_Score = ood_Score / len(ood_labels)
         self.finalScore.data = self.finalScore.data - ood_Score
     
     def oe_loss_fn(self, ood_logits):

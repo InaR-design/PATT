@@ -1,6 +1,6 @@
 import os, argparse
 import numpy as np 
-from sklearn.metrics import roc_auc_score, average_precision_score, roc_curve
+from sklearn.metrics import roc_auc_score, average_precision_score
 
 import torch
 import torch.nn.functional as F
@@ -11,16 +11,11 @@ from dataset.ImbalanceImageNet import LT_Dataset
 from models.resnet_imagenet import ResNet50
 from dataset.imagenet_ood import ImageNet_ood
 from sklearn.preprocessing import MinMaxScaler
-from scipy.interpolate import make_interp_spline
 from utils.utils import *
 from utils.ltr_metrics import *
 
 from test import get_measures
 import random
-from sklearn.manifold import TSNE
-# to prevent PIL error from reading large images:
-# See https://github.com/eriklindernoren/PyTorch-YOLOv3/issues/162#issuecomment-491115265
-# or https://stackoverflow.com/questions/12984426/pil-ioerror-image-file-truncated-with-big-images
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True 
 def get_energy_score(logits):
@@ -125,7 +120,7 @@ def val_imagenet():
                 ood_data, ood_labels = ood_data.cuda(), ood_labels.cuda()
                 # forward:
                 #all_labels = torch.cat([labels, ood_labels], dim=0)
-                _, f_in = model(in_data)#得到每个样本的11个分数和512维度的特征向量
+                _, f_in = model(in_data)
                 ood_logits, f_ood = model(ood_data)
                 virtual_labels = ood_logits.max(1)[1]
                 #calibration
@@ -257,7 +252,7 @@ if __name__ == '__main__':
         save_dir = os.path.join(args.ckpt_path, 'normal', args.dout)
     create_dir(save_dir)
 
-    # data:
+    # data prepossessing:
     mean = [0.485, 0.456, 0.406]
     std = [0.229, 0.224, 0.225]
     train_transform = transforms.Compose([
@@ -309,7 +304,6 @@ if __name__ == '__main__':
 
     # model:
     model = ResNet50(num_classes=num_classes, return_features=False).cuda()
-    # model = torch.nn.DataParallel(model)
 
     # load model:
     ckpt = torch.load(os.path.join(args.ckpt_path, 'latest.pth'))['model']

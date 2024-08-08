@@ -51,10 +51,8 @@ def stable_cumsum(arr, rtol=1e-05, atol=1e-08):
                            'its last element does not correspond to sum')
     return out
 
-#
 def fpr_and_fdr_at_recall(y_true, y_score, recall_level=0.95, pos_label=None):
-    classes = np.unique(y_true)#返回y_true中的唯一值，即去重，所有的class
-    #如果没有指定正标签值并且不是二分类问题，那么无法继续计算抛出异常
+    classes = np.unique(y_true)
     if (pos_label is None and
             not (np.array_equal(classes, [0, 1]) or
                      np.array_equal(classes, [-1, 1]) or
@@ -122,8 +120,8 @@ def val_cifar(ood_data):
     Evaluate ID acc and OOD detection on CIFAR10/100
     '''
     model.eval()
+
     # log file:
-    
     fp.write('\n===%s===\n' % (ood_data))
 
     ood_set = SCOODDataset(os.path.join(args.data_root_path, 'data'), id_name=args.dataset, ood_name=ood_data, transform=test_transform)
@@ -190,8 +188,6 @@ def val_cifar(ood_data):
             if args.FC:
                 S = model.forward_Score()
                 logits = model.forward_classifier(p4 * S)
-            ####################################################
-
             probs = F.softmax(logits, dim=1)
             logits = logits
             scores = get_energy_score(logits)
@@ -227,7 +223,6 @@ def val_cifar(ood_data):
     print(ood_detectoin_str)
     fp.write(ood_detectoin_str + '\n')
     fp.flush()
-    #fp.close()
 
 
 if __name__ == '__main__':
@@ -235,7 +230,7 @@ if __name__ == '__main__':
     parser.add_argument('--seed', default=3407, type=int, help='fix the random seed for reproduction. Default is 25.')
     parser.add_argument('--gpu', default='0', help='which GPU to use.')
     parser.add_argument('--num_workers', type=int, default=8, help='number of threads for data loader')
-    parser.add_argument('--FC', default=True, help='If true, use outlier-class-aware logit calibration for LT inference')
+    parser.add_argument('--FC', default=False, help='If true, use outlier-class-aware logit calibration for LT inference')
     parser.add_argument('--tnorm', default=False, help='If true, use t-norm for LT inference')
     # dataset:
     parser.add_argument('--model', '--md', default='ResNet18', choices=['ResNet18', 'ResNet34'], help='which model to use')
@@ -247,11 +242,10 @@ if __name__ == '__main__':
     parser.add_argument('--num_ood_samples', default=300000, type=int, help='Number of OOD samples to use.')
     parser.add_argument('--imbalance_ratio', '--rho', default=0.01, type=float)
     parser.add_argument('--test_batch_size', '--tb', type=int, default=1000, help='input batch size for testing')
-    parser.add_argument('--ckpt_path', default='/home/imt-3090-2/inar/PATT/results/cifar10-0.01-OOD300000/ResNet18/e100-b128-256-adam-lr0.001-wd0.0005_Lambda1 0.2-Lambda5 1/parameter_ablation_3-5', help='where your checkpoint saved.')
+    parser.add_argument('--ckpt_path', default='/home/imt-3090-2/inar/PATT/results/cifar10-0.01-OOD300000/ResNet18/e100-b128-256-adam-lr0.001-wd0.0005_Lambda1 0.1-Lambda2 0.5/parameter_ablation_3-5', help='where your checkpoint saved.')
     args = parser.parse_args()
     print(args)
 
-    # ============================================================================
     # fix random seed
     random.seed(args.seed)
     torch.manual_seed(args.seed)
@@ -270,7 +264,7 @@ if __name__ == '__main__':
         save_dir = os.path.join(args.ckpt_path, 'normal')
     create_dir(save_dir)
 
-    # data:
+    # data preprocessing:
     train_transform = transforms.Compose([
         transforms.RandomCrop(32, padding=4),
         transforms.RandomHorizontalFlip(),
@@ -292,8 +286,6 @@ if __name__ == '__main__':
         train_set = IMBALANCECIFAR100(train=True, transform=train_transform, imbalance_ratio=args.imbalance_ratio, root=args.data_root_path)
         test_set = IMBALANCECIFAR100(train=False, transform=test_transform, imbalance_ratio=1, root=args.data_root_path)
         balance_set = IMBALANCECIFAR100_sim(train=False, transform=train_transform, imbalance_ratio=args.imbalance_ratio, root=args.data_root_path)
-    
-
 
     test_loader = DataLoader(test_set, batch_size=args.test_batch_size, shuffle=False, num_workers=args.num_workers, 
                                 drop_last=False, pin_memory=False)
@@ -305,15 +297,11 @@ if __name__ == '__main__':
         args.dout[args.dout.index('cifar')] = 'cifar10'
     
     ood_trainset = Subset(TinyImages(args.data_root_path, transform=train_transform, dataset = args.dataset), list(range(args.num_ood_samples)))
-    
-    ood_trainloader = DataLoader(ood_trainset, batch_size=args.test_batch_size, shuffle=False, num_workers=args.num_workers,drop_last=False, pin_memory=True)
-    
+    ood_trainloader = DataLoader(ood_trainset, batch_size=args.test_batch_size, shuffle=False, num_workers=args.num_workers,drop_last=False, pin_memory=True)  
 
     img_num_per_cls = np.array(train_set.img_num_per_cls)
     prior = img_num_per_cls / np.sum(img_num_per_cls)
     prior = torch.from_numpy(prior).float().cuda()
-    # arr = prior[int(num_classes*0.6):].__reversed__()
-    # prior[:int(num_classes*0.4)] = -arr
 
     # model:
     if args.model == 'ResNet18':
@@ -342,20 +330,15 @@ if __name__ == '__main__':
         model.linear.weight.data = w / w_row_norm[:,None]
         model.linear.bias.zero_()
 
-
     model.eval()
     if args.FC:
         with torch.no_grad():
             for batch_idx, ((in_data, labels), (ood_data, ood_labels)) in enumerate(zip(balance_loader, ood_trainloader)):
                 in_data, labels = in_data.cuda(), labels.cuda()
                 ood_data, ood_labels = ood_data.cuda(), ood_labels.cuda()
-                # forward:
-                #all_labels = torch.cat([labels, ood_labels], dim=0)
                 _, f_in = model(in_data)
                 ood_logits, f_ood = model(ood_data)
                 virtual_labels = ood_logits.max(1)[1]
-                #calibration
-
                 model.Classbalanced_Calibration(f_in, f_ood, virtual_labels, labels, priors=prior, batchs = batch_idx, num_classes=num_classes)
 
 

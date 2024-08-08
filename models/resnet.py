@@ -8,7 +8,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import math
 from sklearn.preprocessing import MinMaxScaler
-from utils.supconloss import SupConLoss
 
 
 class BasicBlock(nn.Module):
@@ -57,14 +56,8 @@ class ResNet(nn.Module):
         self.layer4 = self._make_layer(block, 512, num_blocks[3], stride=2, norm=norm)
         self.linear = nn.Linear(512, num_classes)
         
-        ########################################################################################
-        # self.BCL_weight = nn.Parameter(torch.Tensor(num_classes, 512).cuda(), requires_grad=True)
-        # self.reset_parameters(self.BCL_weight)
-        # self.OOD_pro = nn.Parameter(torch.Tensor(3, 512).cuda(), requires_grad=True)
-        # self.reset_parameters(self.OOD_pro)
         self.finalScore = nn.Parameter(torch.zeros(512), requires_grad=False)
-        # self.head = nn.Sequential(nn.Linear(512, 512), nn.BatchNorm1d(512), nn.ReLU(inplace=True), nn.Linear(512, 128))
-        #######################################################################################
+
         feat_dim = 256
         tau = 16.0
         num_head = 2
@@ -116,41 +109,26 @@ class ResNet(nn.Module):
             return logits, p4
         else:
             return logits
-        
-    def supcon_forward(self,  temp, f, labels=None, mask=None):
-        criterion = SupConLoss(temperature=temp)
-        f_norm = self.l2_norm(f)
-        return criterion(f_norm, labels)
     
+    # Post-hoc feature calibration
     def Classbalanced_Calibration(self, x, ood_x, ood_labels, labels, priors, batchs, num_classes, add_inputs=None):
         normed_x = x
         normed_w = self.linear.weight
         
         Score = torch.zeros(512).cuda()
         ood_Score = torch.zeros(512).cuda()
-        head_class_scores = torch.zeros(512).cuda()
-        tail_class_scores = torch.zeros(512).cuda()
         p = priors**-1
-        # p = weight
-        #p = torch.cat((priors**-1, torch.tensor([1]).cuda()), dim = 0)
         for feature, label in zip(normed_x, labels):
             Score = torch.mul(feature, normed_w[label]) * p[label] + Score
-            if label < int(num_classes*0.4):
-                head_class_scores = torch.mul(feature, normed_w[label]) * p[label] + head_class_scores
-            elif label >= int(num_classes*0.6):
-                tail_class_scores = torch.mul(feature, normed_w[label]) * p[label] + tail_class_scores
-        Score = Score / len(labels)#一个batch的均值
+
+        Score = Score / len(labels)
         self.finalScore.data = self.finalScore.data*batchs + Score
 
         for feature, label in zip(ood_x, ood_labels):
-            ood_Score = torch.mul(feature, normed_w[label]) * p[label] + ood_Score#int(num_classes/2)
-        ood_Score = ood_Score / len(ood_labels)#一个batch的均值
+            ood_Score = torch.mul(feature, normed_w[label]) * p[label] + ood_Score
+        ood_Score = ood_Score / len(ood_labels)
         self.finalScore.data = self.finalScore.data - ood_Score
 
-
-        # scaler = MinMaxScaler(feature_range=(0,1))
-        # ood_Score, head_class_scores, tail_class_scores = scaler.fit_transform(ood_Score.cpu().numpy().reshape(-1, 1)).ravel(), scaler.fit_transform(head_class_scores.cpu().numpy().reshape(-1, 1)).ravel(), scaler.fit_transform(tail_class_scores.cpu().numpy().reshape(-1, 1)).ravel()
-        # return ood_Score/ood_Score.sum(), head_class_scores/head_class_scores.sum(), tail_class_scores/tail_class_scores.sum()
 
     
     def oe_loss_fn(self, ood_logits):
