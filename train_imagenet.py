@@ -30,7 +30,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 def get_args_parser():
     # Training settings
     parser = argparse.ArgumentParser(description='PyTorch CIFAR Example')
-    parser.add_argument('--seed', default=3407, type=int, help='fix the random seed for reproduction. Default is 25.')
+    parser.add_argument('--seed', default=3407, type=int, help='fix the random seed for reproduction. Default is 3407.')
     parser.add_argument('--replay', default='replay', help='repetitions for reproduction.')
     parser.add_argument('--gpu', default='0', help='which GPU to use.')
     parser.add_argument('--num_workers', '--cpus', default=4, help='number of threads for data loader')
@@ -49,10 +49,10 @@ def get_args_parser():
     parser.add_argument('--Lambda1', default=0.02, type=float, help='OE loss term tradeoff hyper-parameter: 0.1 for CIFAR and 0.02 for ImageNet')
     parser.add_argument('--Lambda2', default=0.5, type=float, help='Temperature Scaling-based Logits Adjustment loss term tradeoff hyper-parameter:0.5')
     parser.add_argument('--num_ood_samples', default=300000, type=int, help='Number of OOD samples to use.')
-    parser.add_argument('--temperature', type=float, default=0.1, help='temperature in OOD-Aware Tail Class Prototype Learning loss')
-    parser.add_argument('--tem_scale', type=float, default=0.7, help='temperature')
+    parser.add_argument('--temperature', type=float, default=0.1, help='Tempearture in implicit semantic augmentation contrastive loss')
+    parser.add_argument('--tem_scale', type=float, default=0.7, help='Temperature in temperature scaling-based logits adjustment loss')
     parser.add_argument('--headrate', default=0.4, type=float, help='percentage of head to use')
-    parser.add_argument('--tailrate', default=0.4, type=float, help='percentage of head to use')
+    parser.add_argument('--tailrate', default=0.4, type=float, help='percentage of tail to use')
     parser.add_argument('--save_root_path', '--srp', default='./results', help='data root path')
     parser.add_argument('--txt_train', '--txtt', default='./dataset/ImageNet_LT_train.txt', help='txt path for train')
     parser.add_argument('--txt_val', '--txtv', default='./dataset/ImageNet_LT_val.txt', help='txt path for val')

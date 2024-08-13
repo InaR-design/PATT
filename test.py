@@ -230,19 +230,16 @@ if __name__ == '__main__':
     parser.add_argument('--seed', default=3407, type=int, help='fix the random seed for reproduction. Default is 25.')
     parser.add_argument('--gpu', default='0', help='which GPU to use.')
     parser.add_argument('--num_workers', type=int, default=8, help='number of threads for data loader')
-    parser.add_argument('--FC', default=False, help='If true, use outlier-class-aware logit calibration for LT inference')
-    parser.add_argument('--tnorm', default=False, help='If true, use t-norm for LT inference')
-    # dataset:
+    parser.add_argument('--FC', default=False, help='Use post-hoc feature calibration or not')
+    parser.add_argument('--tnorm', default=False, help='Use t-norm or not')
     parser.add_argument('--model', '--md', default='ResNet18', choices=['ResNet18', 'ResNet34'], help='which model to use')
     parser.add_argument('--dataset', '--ds', default='cifar10', choices=['cifar10', 'cifar100'], help='which dataset to use')
     parser.add_argument('--data_root_path', '--drp', default='./dataset', help='Where you save all your datasets.')
     parser.add_argument('--dout', default=['cifar', 'lsun', 'places365', 'svhn', 'texture', 'tin'], help='which dout to use')
-    # 
-    parser.add_argument('--temperature', type=float, default=0.01, help='temperature for softmax')
     parser.add_argument('--num_ood_samples', default=300000, type=int, help='Number of OOD samples to use.')
     parser.add_argument('--imbalance_ratio', '--rho', default=0.01, type=float)
     parser.add_argument('--test_batch_size', '--tb', type=int, default=1000, help='input batch size for testing')
-    parser.add_argument('--ckpt_path', default='/home/imt-3090-2/inar/PATT/results/cifar10-0.01-OOD300000/ResNet18/e100-b128-256-adam-lr0.001-wd0.0005_Lambda1 0.1-Lambda2 0.5/parameter_ablation_3-5', help='where your checkpoint saved.')
+    parser.add_argument('--ckpt_path', default='', help='checkpoint path')
     args = parser.parse_args()
     print(args)
 

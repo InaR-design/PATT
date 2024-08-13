@@ -214,20 +214,18 @@ def val_imagenet():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Test an ImageNet Classifier')
-    parser.add_argument('--seed', default=3407, type=int, help='fix the random seed for reproduction. Default is 25.')
+    parser.add_argument('--seed', default=3407, type=int, help='fix the random seed for reproduction. Default is 3407.')
     parser.add_argument('--gpu', default='0', help='which GPU to use.')
     parser.add_argument('--num_workers', type=int, default=16, help='number of threads for data loader')
-    # dataset:
     parser.add_argument('--dataset', '--ds', default='imagenet', choices=['imagenet'], help='which dataset to use')
     parser.add_argument('--data_root_path', '--drp', default='./datasets', help='Where you save all your datasets.')
     parser.add_argument('--dout', default='imagenet-10k', choices=['imagenet-10k'], help='which dout to use')
     parser.add_argument('--model', '--md', default='ResNet50', choices=['ResNet50'], help='which model to use')
-    # 
     parser.add_argument('--test_batch_size', '--tb', type=int, default=100)
-    parser.add_argument('--ckpt_path', default='/home/imt-3090-2/inar/COCL/result_copy/imagenet-lt/ResNet50/e100-b32-64-sgd-lr0.1-wd5e-05_Lambda1 0.02-Lambda2 0-Lambda5 0.5/replay2')
-    parser.add_argument('--tnorm', default=False, help='If true, use t-norm for LT inference')
+    parser.add_argument('--ckpt_path', default='', help='checkpoint path')
     parser.add_argument('--num_cal', default=30000, type=int, help='num for calibration.')
-    parser.add_argument('--FC', default=False, help='If true, use outlier-class-aware logit calibration for LT inference')
+    parser.add_argument('--FC', default=True, help='Use post-hoc feature calibration or not')
+    parser.add_argument('--tnorm', default=False, help='Use t-norm or not')
     parser.add_argument('--txt_train', '--txtt', default='./dataset/ImageNet_LT_train.txt', help='txt path for train')
     parser.add_argument('--txt_val', '--txtv', default='./dataset/ImageNet_LT_val.txt', help='txt path for val')
     parser.add_argument('--iidp', '--iidp', default='/mnt/data/melon/imagenet/imagenet12', help='path for imagenet1k')
