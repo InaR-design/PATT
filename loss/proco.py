@@ -4,7 +4,6 @@ import torch.nn.functional as F
 from scipy.special import ive
 import numpy as np
 import torch.distributed as dist
-#计算修正的第一类和第二类贝塞尔函数
 def miller_recurrence(nu, x):
     I_n = torch.ones(1, dtype=torch.float64).cuda()
     I_n1 = torch.zeros(1, dtype=torch.float64).cuda()
@@ -18,7 +17,6 @@ def miller_recurrence(nu, x):
         I_n_tem, I_n1_tem = 2*i/x*I_n + I_n1, I_n
         if torch.isinf(I_n_tem).any():
             if I_n.shape != I_n1.shape:
-            # 如果 I_n 的形状不等于 I_n1 的形状，那么调整 I_n1 的形状以匹配 I_n
                 I_n1 = I_n1.view(I_n.shape)
             I_n1 /= I_n
             scale += torch.log(I_n)
