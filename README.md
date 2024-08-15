@@ -21,11 +21,11 @@ pip install -r requirements.txt
 
 ### In-distribution datasets
 
-Please download [CIFAR10](), [CIFAR100](), and [ImageNet-LT](https://liuziwei7.github.io/projects/LongTail.html) , place them  in`./dataset` 
+Please download [CIFAR10](http://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz), [CIFAR100](http://www.cs.toronto.edu/~kriz/cifar-100-python.tar.gz), and [ImageNet-LT](https://liuziwei7.github.io/projects/LongTail.html) , place them  in`./dataset` 
 
 ### Surrogate/Out-of-distribution datasets
 
-For [CIFAR10-LT]() and [CIFAR100-LT](), please download [TinyImages 300K Random Images](https://people.eecs.berkeley.edu/~hendrycks/300K_random_images.npy) for surrogate OOD and [SC-OOD](https://jingkang50.github.io/projects/scood) for OOD test in `./dataset/Tiny_Images_Dataset` 
+For [CIFAR10-LT](http://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz) and [CIFAR100-LT](http://www.cs.toronto.edu/~kriz/cifar-100-python.tar.gz), please download [TinyImages 300K Random Images](https://people.eecs.berkeley.edu/~hendrycks/300K_random_images.npy) for surrogate OOD and [SC-OOD](https://jingkang50.github.io/projects/scood) for OOD test in `./dataset/Tiny_Images_Dataset` 
 
 For [ImageNet-LT](https://liuziwei7.github.io/projects/LongTail.html), please download [ImageNet10k_eccv2010](https://image-net.org/data/imagenet10k_eccv2010.tar) for surrogate OOD and test OOD 
 
