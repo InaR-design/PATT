@@ -228,8 +228,8 @@ if __name__ == '__main__':
     parser.add_argument('--tnorm', default=False, help='Use t-norm or not')
     parser.add_argument('--txt_train', '--txtt', default='./dataset/ImageNet_LT_train.txt', help='txt path for train')
     parser.add_argument('--txt_val', '--txtv', default='./dataset/ImageNet_LT_val.txt', help='txt path for val')
-    parser.add_argument('--iidp', '--iidp', default='/mnt/data/melon/imagenet/imagenet12', help='path for imagenet1k')
-    parser.add_argument('--iodp', '--iodp', default='/mnt/data/IMAGENET', help='path for imagenet10k')
+    parser.add_argument('--iidp', '--iidp', default='', help='path for imagenet1k')
+    parser.add_argument('--iodp', '--iodp', default='', help='path for imagenet10k')
     args = parser.parse_args()
     print(args)
 
