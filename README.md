@@ -37,13 +37,13 @@ All datasets follow [PASCL](https://github.com/amazon-science/long-tailed-ood-de
 ### CIFAR10-LT: 
 
 ```
-python train.py --gpu 0 --ds cifar10 --Lambda1 0.5 --Lambda2 0.1 --drp <where_you_store_all_your_datasets> --srp <where_to_save_the_ckpt>
+python train.py --gpu 0 --ds cifar10 --Lambda1 0.1 --Lambda2 0.5 --drp <where_you_store_all_your_datasets> --srp <where_to_save_the_ckpt>
 ```
 
 ### CIFAR100-LT:
 
 ```
-python train.py --gpu 0 --ds cifar100 --Lambda1 0.5 --Lambda2 0.1 --drp <where_you_store_all_your_datasets> --srp <where_to_save_the_ckpt>
+python train.py --gpu 0 --ds cifar100 --Lambda1 0.1 --Lambda2 0.5 --drp <where_you_store_all_your_datasets> --srp <where_to_save_the_ckpt>
 ```
 
 ### ImageNet-LT:
